@@ -8,4 +8,15 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DateNavigate">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorSchedularButtonText</item>
+    </style>
+
+    <style name="SchedularButton">
+        <item name="android:background">@drawable/schedular_button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorSchedularButtonText</item>
+    </style>
+
 </resources>

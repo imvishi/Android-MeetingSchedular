@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="meeting_item_margin">5dp</dimen>
+    <dimen name="meeting_item_padding">15dp</dimen>
+
+    <!-- Schedular Button -->
+    <dimen name="schedular_button_radius">10dp</dimen>
+    <dimen name="schedular_button_padding">10dp</dimen>
+</resources>

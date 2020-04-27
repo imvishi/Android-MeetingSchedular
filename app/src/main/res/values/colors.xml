@@ -3,4 +3,8 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="colorMeetingItemBorder">#999966</color>
+    <color name="colorTextDivider">#e0e0d1</color>
+    <color name="colorSchedularMeeting">#66cc99</color>
+    <color name="colorSchedularButtonText">#ffffff</color>
 </resources>
