@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meetingscheduler.Data.MeetingDataModel
 import com.example.meetingscheduler.R
-import com.example.meetingscheduler.Utils.ConfigurationUtils
+import com.example.meetingscheduler.utils.ConfigurationUtils
 import com.example.meetingscheduler.presentation.MeetingListAdapter.MeetingListViewHolder
 import kotlinx.android.synthetic.main.meeting_item.view.*
 

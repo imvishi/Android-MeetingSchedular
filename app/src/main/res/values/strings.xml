@@ -3,4 +3,10 @@
     <string name="schedular_prev_day">PREV</string>
     <string name="schedular_next_day">NEXT</string>
     <string name="schedular_button_text">SCHEDULE COMPANY MEETING</string>
+    <string name="schedule_meeting_title">SCHEDULE A MEETING</string>
+    <string name="schedule_meeting_back">BACK</string>
+    <string name="schedule_meeting_button">SUBMIT</string>
+    <string name="date_prompt">Meeting Date</string>
+    <string name="start_time_prompt">Start Time</string>
+    <string name="end_time_prompt">End Time</string>
 </resources>

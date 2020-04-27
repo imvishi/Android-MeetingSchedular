@@ -6,4 +6,9 @@
     <!-- Schedular Button -->
     <dimen name="schedular_button_radius">10dp</dimen>
     <dimen name="schedular_button_padding">10dp</dimen>
+
+    <!--Dimes for schedule screen -->
+    <dimen name="schedule_screen_margin">20dp</dimen>
+    <dimen name="picker_padding">10dp</dimen>
+    <dimen name="picker_radius">3dp</dimen>
 </resources>

@@ -19,4 +19,16 @@
         <item name="android:textColor">@color/colorSchedularButtonText</item>
     </style>
 
+    <style name="TextDropDown">
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">@dimen/picker_padding</item>
+    </style>
+
+    <style name="Description" parent="android:Widget.EditText">
+        <item name="android:layout_margin">@dimen/schedule_screen_margin</item>
+        <item name="android:lines">3</item>
+        <item name="android:gravity">top|left</item>
+        <item name="android:hint">Description</item>
+        <item name="android:background">@android:drawable/editbox_background_normal</item>
+    </style>
 </resources>

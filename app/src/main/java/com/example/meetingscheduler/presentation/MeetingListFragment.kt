@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.meetingscheduler.Data.MeetingDataModel
 import com.example.meetingscheduler.R
 import kotlinx.android.synthetic.main.main_fragment.*
+import kotlinx.android.synthetic.main.meeting_schedule_fragment.*
 
 /**
  * Fragment to show the list of meetings for any particular day.
@@ -18,6 +19,7 @@ class MeetingListFragment : Fragment() {
 
     companion object {
         fun newInstance() = MeetingListFragment()
+        private const val TAG = "MeetingListFragment"
     }
 
     private lateinit var viewModel: SchedulerViewModel
@@ -41,6 +43,12 @@ class MeetingListFragment : Fragment() {
         meetingList.apply {
             adapter = meetingListAdapter
             layoutManager = LinearLayoutManager(requireContext())
+        }
+        scheduleButton.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, ScheduleMeetingFragment.newInstance())
+                .addToBackStack(TAG)
+                .commit()
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.meetingscheduler.Utils
+package com.example.meetingscheduler.utils
 
 import android.content.Context
 import android.content.res.Configuration
