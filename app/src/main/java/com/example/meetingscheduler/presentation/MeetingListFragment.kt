@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.meetingscheduler.Data.MeetingDataModel
 import com.example.meetingscheduler.R
+import com.example.meetingscheduler.utils.getDateInDateFormat
+import com.example.meetingscheduler.utils.hasDateAlreadyPassed
 import kotlinx.android.synthetic.main.main_fragment.*
-import kotlinx.android.synthetic.main.meeting_schedule_fragment.*
 
 /**
  * Fragment to show the list of meetings for any particular day.
@@ -32,17 +32,26 @@ class MeetingListFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ) = inflater.inflate(R.layout.main_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        meetingListAdapter.setDataModel(mockListData())
+        meetingListAdapter.setDataModel(emptyList())
         meetingList.apply {
             adapter = meetingListAdapter
             layoutManager = LinearLayoutManager(requireContext())
+        }
+        updateView()
+        nextDate.setOnClickListener {
+            viewModel.getNextDaySchedule()
+            updateView()
+        }
+        prevDate.setOnClickListener {
+            viewModel.getPrevDaySchedule()
+            updateView()
         }
         scheduleButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -52,12 +61,22 @@ class MeetingListFragment : Fragment() {
         }
     }
 
-    private fun mockListData() = mutableListOf<MeetingDataModel>().apply {
-        add(MeetingDataModel("11:00AM","12:00PM", "afsafsafsafsafasfsa","sdfsdfsaf,fsfsdf,sfsdf"))
-        add(MeetingDataModel("14:40PM","15:00PM", "afsafsafsafsafasfsa","sf ds,dsfdfsf"))
-        add(MeetingDataModel("18:00PM","18:40PM", "afsafsafsafsafasfsa","sdfdf,dfd"))
-        add(MeetingDataModel("23:30PM","23:30PM", "afsafsafsafsafasfsa","sdfdsf,d,d,d,dd"))
-        add(MeetingDataModel("18:00PM","18:40PM", "afsafsafsafsafasfsa","sdfdf,dfd"))
-        add(MeetingDataModel("23:30PM","23:30PM", "afsafsafsafsafasfsa","sdfdsf,d,d,d,dd"))
+    private fun updateView() {
+        dateText.text = viewModel.calendar.getDateInDateFormat()
+        enableScheduleButton()
+    }
+
+    private fun enableScheduleButton() {
+        if (viewModel.calendar.hasDateAlreadyPassed()) {
+            scheduleButton.apply {
+                alpha = 0.2f
+                isEnabled = false
+            }
+        } else {
+            scheduleButton.apply {
+                alpha = 1.0f
+                isEnabled = true
+            }
+        }
     }
 }

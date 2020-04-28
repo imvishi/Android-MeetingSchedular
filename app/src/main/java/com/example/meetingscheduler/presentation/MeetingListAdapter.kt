@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.meetingscheduler.Data.MeetingDataModel
+import com.example.meetingscheduler.data.MeetingDataModel
 import com.example.meetingscheduler.R
 import com.example.meetingscheduler.utils.ConfigurationUtils
 import com.example.meetingscheduler.presentation.MeetingListAdapter.MeetingListViewHolder
@@ -47,11 +47,12 @@ class MeetingListAdapter(val context: Context) : RecyclerView.Adapter<MeetingLis
 
         fun bind(dataModel: MeetingDataModel) {
             if (ConfigurationUtils.isLandScape(context)) {
-                startTimeText.text = dataModel.startTime
-                endTimeText.text = dataModel.endTime
-                participants.text = dataModel.participants
+                startTimeText.text = dataModel.startTime.formatTime()
+                endTimeText.text = dataModel.endTime.formatTime()
+                participants.text = "dataModel.participants"
             } else {
-                val time = """${dataModel.startTime}-${dataModel.endTime}"""
+                val time =
+                    """${dataModel.startTime.formatTime()}-${dataModel.endTime.formatTime()}"""
                 timeText.text = time
             }
             description.text = dataModel.description
