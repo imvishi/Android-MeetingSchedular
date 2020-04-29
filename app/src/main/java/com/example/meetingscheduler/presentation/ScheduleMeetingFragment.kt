@@ -1,6 +1,8 @@
 package com.example.meetingscheduler.presentation
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +14,7 @@ import com.example.meetingscheduler.data.EndTime
 import com.example.meetingscheduler.data.MeetingTime
 import com.example.meetingscheduler.data.StartTime
 import com.example.meetingscheduler.R
-import com.example.meetingscheduler.utils.DateTimePickerManager
-import com.example.meetingscheduler.utils.getDateInDateFormat
-import com.example.meetingscheduler.utils.hasDateAlreadyPassed
+import com.example.meetingscheduler.utils.*
 import kotlinx.android.synthetic.main.meeting_schedule_fragment.*
 import java.util.*
 
@@ -32,10 +32,30 @@ class ScheduleMeetingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(SchedulerViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(SchedulerViewModel::class.java).also {
+            it.meetingScheduledConfirmation.observeNonNull(this, Observer {
+                loadingProgressBar.visibility = View.GONE
+                if (it) {
+                    AlertDialog.Builder(requireContext())
+                        .setMessage("Meeting Scheduled successfully.")
+                        .show()
+                } else {
+                    AlertDialog.Builder(requireContext())
+                        .setMessage("Please select another slot.")
+                        .show()
+                }
+                viewModel.meetingScheduledConfirmation.value = null
+            })
+
+        }
         dateTimePickerManager = DateTimePickerManager(requireContext()).also {
             it.dateUpdatedLiveData.observe(this, Observer(::onDateUpdated))
             it.timeUpdatedLiveData.observe(this, Observer(::onTimeUpdated))
+        }
+
+        if (savedInstanceState == null) {
+            viewModel.calendarEndTime.resetMeetingTime()
+            viewModel.calendarStartTime.resetMeetingTime()
         }
     }
 
@@ -72,7 +92,10 @@ class ScheduleMeetingFragment : Fragment() {
         descriptionText.doOnTextChanged { _, _, _, _ ->
             enableScheduleMeetingButton()
         }
-        scheduleMeetingButton.setOnClickListener { viewModel.updateMeeting(descriptionText.text.toString()) }
+        scheduleMeetingButton.setOnClickListener {
+            loadingProgressBar.visibility = View.VISIBLE
+            viewModel.updateMeeting(descriptionText.text.toString())
+        }
     }
 
     private fun updateDateView() {

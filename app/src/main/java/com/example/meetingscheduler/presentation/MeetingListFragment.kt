@@ -29,6 +29,7 @@ class MeetingListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SchedulerViewModel::class.java).also {
+            it.getCurrentDaySchedule()
             it.meetingScheduleLiveData.observe(this, Observer {
                 loadingProgressBar.visibility = View.GONE
                 meetingList.visibility = View.VISIBLE

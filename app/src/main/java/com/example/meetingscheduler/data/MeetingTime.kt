@@ -32,6 +32,14 @@ sealed class MeetingTime(open var hours: Int, open var minutes: Int) {
      * method used to get time into minutes
      */
     fun getTimeInMinutes()  = this.hours * 60 + this.minutes
+
+    /**
+     * method used to reset the meeting time
+     */
+    fun resetMeetingTime() {
+        hours = -1
+        minutes = -1
+    }
 }
 
 /**
