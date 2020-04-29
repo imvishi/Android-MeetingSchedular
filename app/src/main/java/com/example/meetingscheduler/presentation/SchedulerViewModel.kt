@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 import com.example.meetingscheduler.data.*
 import com.example.meetingscheduler.data.database.DataBaseQuery
 import com.example.meetingscheduler.data.database.DataBaseQuery.Callback
-import com.example.meetingscheduler.utils.observeOnce
+import com.example.meetingscheduler.utils.observeOnceAndNonNull
 import java.util.*
 
 class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback {
@@ -66,14 +66,15 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
         }
     }
 
+    /**
+     * Method used to schedule the meeting
+     */
     fun updateMeeting(description: String) {
         dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
-        val observers = Observer<List<MeetingDataModel>> {
-            val isTimeAvailable = isTimeAvailable(it)
-            if (!isTimeAvailable) {
+        val observer = Observer<List<MeetingDataModel>> {
+            if (!isTimeAvailable(it)) {
                 meetingScheduledConfirmation.value = false
             } else {
-                meetingScheduledConfirmation.value = true
                 dataBaseQuery.insertMeetingSchedule(
                     MeetingDataModel(
                         calendar,
@@ -82,9 +83,12 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
                         description
                     )
                 )
+                meetingScheduledConfirmation.value = true
             }
         }
-        meetingScheduleLiveData.observeOnce(observers)
+        // Reset the live data value, so that observeOnceAndNonNull observe new non null value.
+        meetingScheduleLiveData.value = null
+        meetingScheduleLiveData.observeOnceAndNonNull(observer)
     }
 
 

@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.meetingscheduler.data.EndTime
 import com.example.meetingscheduler.data.MeetingDataModel
 import com.example.meetingscheduler.data.StartTime
-import com.example.meetingscheduler.utils.getDate
+import com.example.meetingscheduler.utils.getTotalNumberOfDays
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -13,7 +13,7 @@ import java.util.*
  */
 class DataBaseQuery(context: Context, val listener: Callback) {
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-    private val dataBase = MeetingScheduleDataBase(context)
+    private val dataBase = MeetingScheduleDataBase.getDatabase(context)
 
 
     interface Callback {
@@ -32,7 +32,7 @@ class DataBaseQuery(context: Context, val listener: Callback) {
                 .meetingScheduleDao()
                 .insertMeetingSchedule(
                     MeetingScheduleEntity(
-                        meetingDate = meetingSchedule.meetingDate.getDate(),
+                        meetingDate = meetingSchedule.meetingDate.getTotalNumberOfDays(),
                         startTimeInMinutes = meetingSchedule.startTime.getTimeInMinutes(),
                         endTimeInMinutes = meetingSchedule.endTime.getTimeInMinutes(),
                         description = meetingSchedule.description
@@ -46,12 +46,12 @@ class DataBaseQuery(context: Context, val listener: Callback) {
     fun selectAllMeetingScheduleAtDate(meetingDate: Calendar) {
         coroutineScope.launch {
             val meetingSchedule = async {
-                dataBase.meetingScheduleDao().getMeetingSchedule(meetingDate.getDate())
+                dataBase.meetingScheduleDao().getMeetingSchedule(meetingDate.getTotalNumberOfDays())
             }.await()
             withContext(Dispatchers.Main) {
                 val meetings = meetingSchedule.map {
                     MeetingDataModel(
-                        Calendar.getInstance().apply { it.meetingDate.time },
+                        Calendar.getInstance().apply { it.meetingDate*60*60*24*1000 },
                         StartTime(it.startTimeInMinutes / 60, it.startTimeInMinutes % 60),
                         EndTime(it.endTimeInMinutes / 60, it.endTimeInMinutes % 60),
                         it.description

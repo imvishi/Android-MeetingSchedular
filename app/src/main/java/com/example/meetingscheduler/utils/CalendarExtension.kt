@@ -26,6 +26,6 @@ fun Calendar.getDateInDateFormat(): String {
 }
 
 /**
- * Extension function to get the Date from Calendar
+ * Entension function to convert time in millies to total number of Days
  */
-fun Calendar.getDate() = Date(this.timeInMillis)
+fun Calendar.getTotalNumberOfDays() = (this.timeInMillis/(60*60*24*1000)).toInt()

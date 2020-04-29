@@ -49,7 +49,7 @@ class MeetingListAdapter(val context: Context) : RecyclerView.Adapter<MeetingLis
             if (ConfigurationUtils.isLandScape(context)) {
                 startTimeText.text = dataModel.startTime.formatTime()
                 endTimeText.text = dataModel.endTime.formatTime()
-                participants.text = "dataModel.participants"
+                participants.text = ""
             } else {
                 val time =
                     """${dataModel.startTime.formatTime()}-${dataModel.endTime.formatTime()}"""

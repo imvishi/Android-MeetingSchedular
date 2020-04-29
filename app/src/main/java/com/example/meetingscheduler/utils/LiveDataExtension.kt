@@ -10,11 +10,13 @@ fun <T> LiveData<T>.observeNonNull(lifecycleOwner: LifecycleOwner, observer: Obs
     })
 }
 
-fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+fun <T> LiveData<T>.observeOnceAndNonNull(observer: Observer<T>) {
     observeForever(object : Observer<T> {
         override fun onChanged(t: T?) {
-            observer.onChanged(t)
-            removeObserver(this)
+            t?.let {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
         }
     })
 }
