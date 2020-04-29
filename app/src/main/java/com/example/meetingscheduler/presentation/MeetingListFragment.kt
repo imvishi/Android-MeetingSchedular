@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.meetingscheduler.R
@@ -27,7 +28,13 @@ class MeetingListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(SchedulerViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(SchedulerViewModel::class.java).also {
+            it.meetingScheduleLiveData.observe(this, Observer {
+                loadingProgressBar.visibility = View.GONE
+                meetingList.visibility = View.VISIBLE
+                meetingListAdapter.setDataModel(it)
+            })
+        }
         meetingListAdapter = MeetingListAdapter(requireContext())
     }
 
@@ -39,7 +46,6 @@ class MeetingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        meetingListAdapter.setDataModel(emptyList())
         meetingList.apply {
             adapter = meetingListAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -63,6 +69,8 @@ class MeetingListFragment : Fragment() {
 
     private fun updateView() {
         dateText.text = viewModel.calendar.getDateInDateFormat()
+        loadingProgressBar.visibility = View.VISIBLE
+        meetingList.visibility = View.GONE
         enableScheduleButton()
     }
 

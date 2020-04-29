@@ -1,6 +1,7 @@
 package com.example.meetingscheduler.utils
 
 import android.text.format.DateUtils
+import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,3 +24,8 @@ fun Calendar.getDateInDateFormat(): String {
     val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
     return dateFormat.format(this.time)
 }
+
+/**
+ * Extension function to get the Date from Calendar
+ */
+fun Calendar.getDate() = Date(this.timeInMillis)

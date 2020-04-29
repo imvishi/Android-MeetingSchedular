@@ -4,22 +4,32 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.meetingscheduler.data.*
+import com.example.meetingscheduler.data.database.DataBaseQuery
+import com.example.meetingscheduler.data.database.DataBaseQuery.Callback
 import java.util.*
 
-class SchedulerViewModel(val app: Application) : AndroidViewModel(app) {
-    private val _meetingScheduleLiveData = MutableLiveData<List<MeetingDataModel>>()
+class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback {
+
+    private val dataBaseQuery = DataBaseQuery(app.applicationContext, this)
+    val meetingScheduleLiveData = MutableLiveData<List<MeetingDataModel>>()
     var calendar: Calendar = Calendar.getInstance()
     var calendarStartTime = StartTime(-1,-1)
     var calendarEndTime = EndTime(-1,-1)
 
+    init {
+        getDateWithOffset(0)
+        dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
+    }
 
-    fun getMeetingScheduleLivaData() = _meetingScheduleLiveData
-
+    override fun onMeetingScheduleFetched(meetingDataModel: List<MeetingDataModel>) {
+        meetingScheduleLiveData.value = meetingDataModel
+    }
     /**
      * method used to fetch next day schedule
      */
     fun getNextDaySchedule() {
         getDateWithOffset(1)
+        dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
     }
 
     /**
@@ -27,6 +37,7 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app) {
      */
     fun getPrevDaySchedule() {
         getDateWithOffset(-1)
+        dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
     }
 
     /**
@@ -46,6 +57,17 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app) {
             is EndTime -> calendarEndTime = time
 
         }
+    }
+
+    fun updateMeeting(description: String) {
+        dataBaseQuery.insertMeetingSchedule(
+            MeetingDataModel(
+                calendar,
+                calendarStartTime,
+                calendarEndTime,
+                description
+            )
+        )
     }
 
     private fun getDateWithOffset(day: Int) {

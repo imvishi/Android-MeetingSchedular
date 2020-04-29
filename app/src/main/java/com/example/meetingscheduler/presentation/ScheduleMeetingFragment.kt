@@ -72,7 +72,7 @@ class ScheduleMeetingFragment : Fragment() {
         descriptionText.doOnTextChanged { _, _, _, _ ->
             enableScheduleMeetingButton()
         }
-        scheduleMeetingButton.setOnClickListener {  }
+        scheduleMeetingButton.setOnClickListener { viewModel.updateMeeting(descriptionText.text.toString()) }
     }
 
     private fun updateDateView() {

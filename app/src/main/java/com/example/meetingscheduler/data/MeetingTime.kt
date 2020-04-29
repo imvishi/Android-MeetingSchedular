@@ -27,6 +27,11 @@ sealed class MeetingTime(open var hours: Int, open var minutes: Int) {
         }
         return this.minutes >= time.minutes
     }
+
+    /**
+     * method used to get time into minutes
+     */
+    fun getTimeInMinutes()  = this.hours * 60 + this.minutes
 }
 
 /**
