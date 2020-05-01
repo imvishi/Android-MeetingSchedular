@@ -11,26 +11,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorSchedularMeeting"
-        app:layout_constraintBottom_toTopOf="@id/meetingList"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="10dp">
+            android:layout_height="match_parent">
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/prevDate"
-                style="@style/DateNavigate"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:text="@string/schedular_prev_day"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toStartOf="@id/dateText"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <info.androidhive.fontawesome.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fa_angle_left_solid"
+                    android:textColor="@color/colorSchedularButtonText"
+                    android:textSize="40sp"
+                    app:solid_icon="true" />
+
+                <TextView
+                    style="@style/DateNavigate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/schedular_prev_day" />
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/dateText"
@@ -38,23 +49,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/nextDate"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toEndOf="@id/prevDate"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/nextDate"
-                style="@style/DateNavigate"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:text="@string/schedular_next_day"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toEndOf="@id/dateText"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
+                <TextView
+                    style="@style/DateNavigate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/schedular_next_day"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <info.androidhive.fontawesome.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fa_angle_right_solid"
+                    android:textColor="@color/colorSchedularButtonText"
+                    android:textSize="40sp"
+                    app:solid_icon="true" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -62,8 +87,6 @@
         android:id="@+id/loadingProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,16 +95,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/meetingList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonId"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <LinearLayout
-        android:layout_marginTop="@dimen/meeting_item_margin"
         android:id="@+id/buttonId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/meeting_item_margin"
         android:background="@drawable/meeting_item_background"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent">

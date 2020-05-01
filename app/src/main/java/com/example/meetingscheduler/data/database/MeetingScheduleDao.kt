@@ -2,7 +2,6 @@ package com.example.meetingscheduler.data.database
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao interface MeetingScheduleDao {
@@ -10,6 +9,6 @@ import androidx.room.Query
     @Query("SELECT * FROM meeting_schedule_table WHERE meetingDate = :date")
     fun getMeetingSchedule(date: String): List<MeetingScheduleEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     fun insertMeetingSchedule(meeting: MeetingScheduleEntity)
 }

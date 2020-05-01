@@ -10,7 +10,6 @@ import com.example.meetingscheduler.data.MeetingTime.MEETING_END_TIME
 import com.example.meetingscheduler.data.MeetingTime.MEETING_START_TIME
 import com.example.meetingscheduler.data.database.DataBaseQuery
 import com.example.meetingscheduler.data.database.DataBaseQuery.Callback
-import com.example.meetingscheduler.utils.getTotalNumberOfDays
 import com.example.meetingscheduler.utils.observeOnceAndNonNull
 import java.util.*
 

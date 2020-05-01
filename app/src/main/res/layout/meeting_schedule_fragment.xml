@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/setupFragment"
     android:layout_width="match_parent"
@@ -10,22 +10,35 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorSchedularMeeting">
+        android:background="@color/colorSchedularMeeting"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="10dp">
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/back"
-                style="@style/SchedularButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:text="@string/schedule_meeting_back"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <info.androidhive.fontawesome.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fa_angle_left_solid"
+                    android:textColor="@color/colorSchedularButtonText"
+                    android:textSize="40sp"
+                    app:solid_icon="true" />
+
+                <TextView
+                    style="@style/SchedularButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/schedule_meeting_back" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/setupTitle"
@@ -70,14 +83,16 @@
         android:layout_below="@+id/startTimePickerView"
         android:layout_margin="@dimen/schedule_screen_margin"
         android:background="@drawable/spinner_drawable"
-        android:text="@string/end_time_prompt" />
+        android:text="@string/end_time_prompt"
+        app:layout_constraintTop_toBottomOf="@id/startTimePickerView" />
 
     <EditText
         android:id="@+id/descriptionText"
         style="@style/Description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/endTimePickerView" />
+        android:layout_below="@+id/endTimePickerView"
+        app:layout_constraintTop_toBottomOf="@id/endTimePickerView" />
 
     <Button
         android:id="@+id/scheduleMeetingButton"
@@ -86,7 +101,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/schedule_screen_margin"
-        android:text="@string/schedule_meeting_button" />
+        android:text="@string/schedule_meeting_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"
@@ -94,6 +110,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

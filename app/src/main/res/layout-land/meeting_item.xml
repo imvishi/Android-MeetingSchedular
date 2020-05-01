@@ -48,24 +48,27 @@
 
     <LinearLayout
         android:id="@+id/meetingDescription"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/divider">
 
         <TextView
+            android:layout_gravity="center"
             android:id="@+id/descriptionText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/meeting_item_margin"
             android:paddingStart="@dimen/meeting_item_padding"
             android:paddingLeft="@dimen/meeting_item_padding"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="Description" />
 
         <TextView
             android:id="@+id/participants"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/meeting_item_margin"
             android:paddingStart="@dimen/meeting_item_padding"

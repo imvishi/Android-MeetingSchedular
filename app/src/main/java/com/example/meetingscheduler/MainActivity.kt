@@ -13,13 +13,12 @@ class MainActivity : AppCompatActivity() {
             showMeetingListFragment()
         }
     }
-
     override fun onBackPressed() {
         val count = supportFragmentManager.backStackEntryCount
         if (count == 0 ){
             super.onBackPressed()
         }
-        supportFragmentManager.popBackStack()
+        supportFragmentManager.popBackStackImmediate()
         showMeetingListFragment()
     }
 

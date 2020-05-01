@@ -18,15 +18,28 @@
             android:layout_height="match_parent"
             android:paddingHorizontal="10dp">
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/back"
-                style="@style/SchedularButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:text="@string/schedule_meeting_back"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <info.androidhive.fontawesome.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fa_angle_left_solid"
+                    android:textColor="@color/colorSchedularButtonText"
+                    android:textSize="40sp"
+                    app:solid_icon="true" />
+
+                <TextView
+                    style="@style/SchedularButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/schedule_meeting_back" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/setupTitle"
@@ -47,13 +60,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:layout_marginTop="@dimen/schedule_screen_margin"
         android:layout_marginStart="@dimen/schedule_screen_margin"
         android:layout_marginLeft="@dimen/schedule_screen_margin"
+        android:layout_marginTop="@dimen/schedule_screen_margin"
         android:background="@drawable/spinner_drawable"
         android:text="@string/date_prompt"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/startTimePickerView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <TextView
