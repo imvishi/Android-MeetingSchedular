@@ -1,12 +1,16 @@
 package com.example.meetingscheduler.presentation
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.meetingscheduler.data.*
+import com.example.meetingscheduler.data.MeetingTime.MEETING_END_TIME
+import com.example.meetingscheduler.data.MeetingTime.MEETING_START_TIME
 import com.example.meetingscheduler.data.database.DataBaseQuery
 import com.example.meetingscheduler.data.database.DataBaseQuery.Callback
+import com.example.meetingscheduler.utils.getTotalNumberOfDays
 import com.example.meetingscheduler.utils.observeOnceAndNonNull
 import java.util.*
 
@@ -15,9 +19,8 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
     private val dataBaseQuery = DataBaseQuery(app.applicationContext, this)
     val meetingScheduleLiveData = MutableLiveData<List<MeetingDataModel>>()
     val meetingScheduledConfirmation = MutableLiveData<Boolean>()
-    var calendar: Calendar = Calendar.getInstance()
-    var calendarStartTime = StartTime(-1,-1)
-    var calendarEndTime = EndTime(-1,-1)
+    var meetingStartTime = MEETING_START_TIME
+    var meetingEndTime = MEETING_END_TIME
 
 
     override fun onMeetingScheduleFetched(meetingDataModel: List<MeetingDataModel>) {
@@ -29,14 +32,14 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
      */
     fun getCurrentDaySchedule() {
         getDateWithOffset(0)
-        dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
+        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
     }
     /**
      * method used to fetch next day schedule
      */
     fun getNextDaySchedule() {
         getDateWithOffset(1)
-        dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
+        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
     }
 
     /**
@@ -44,25 +47,25 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
      */
     fun getPrevDaySchedule() {
         getDateWithOffset(-1)
-        dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
+        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
     }
 
     /**
      * Method to set the meeting date
      */
     fun setMeetingScheduleDate(calendar: Calendar) {
-        this.calendar = calendar
+        this.meetingStartTime.calendar = calendar
+        this.meetingEndTime.calendar = calendar
     }
-
 
     /**
      * method to set the meeting time
      */
     fun setMeetingTime(time: MeetingTime) {
-        when(time) {
-            is StartTime -> calendarStartTime = time
-            is EndTime -> calendarEndTime = time
-
+        time.isInitialized = true
+        when (time) {
+            MEETING_START_TIME -> meetingStartTime = time
+            MEETING_END_TIME -> meetingEndTime = time
         }
     }
 
@@ -70,16 +73,15 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
      * Method used to schedule the meeting
      */
     fun updateMeeting(description: String) {
-        dataBaseQuery.selectAllMeetingScheduleAtDate(calendar)
+        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
         val observer = Observer<List<MeetingDataModel>> {
             if (!isTimeAvailable(it)) {
                 meetingScheduledConfirmation.value = false
             } else {
                 dataBaseQuery.insertMeetingSchedule(
                     MeetingDataModel(
-                        calendar,
-                        calendarStartTime,
-                        calendarEndTime,
+                        meetingStartTime.calendar,
+                        meetingEndTime.calendar,
                         description
                     )
                 )
@@ -95,7 +97,7 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
     private fun isTimeAvailable(meetingDataModel: List<MeetingDataModel>): Boolean {
         var isTimeAvailable = true
         meetingDataModel.forEach {
-            if (it.isTimeOverlapWith(calendarStartTime) || it.isTimeOverlapWith(calendarEndTime)) {
+            if (it.isTimeOverlapWith(meetingStartTime) || it.isTimeOverlapWith(meetingEndTime)) {
                 //timeslot overlapped with the requested time
                 isTimeAvailable = false
             }
@@ -104,6 +106,7 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
     }
 
     private fun getDateWithOffset(day: Int) {
-        calendar.add(Calendar.DATE, day)
+        meetingStartTime.calendar.add(Calendar.DATE, day)
+        meetingEndTime.calendar.add(Calendar.DATE, day)
     }
 }

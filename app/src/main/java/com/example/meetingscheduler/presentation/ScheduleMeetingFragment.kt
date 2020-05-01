@@ -2,7 +2,6 @@ package com.example.meetingscheduler.presentation
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +9,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.meetingscheduler.data.EndTime
 import com.example.meetingscheduler.data.MeetingTime
-import com.example.meetingscheduler.data.StartTime
 import com.example.meetingscheduler.R
 import com.example.meetingscheduler.utils.*
 import kotlinx.android.synthetic.main.meeting_schedule_fragment.*
@@ -54,8 +51,8 @@ class ScheduleMeetingFragment : Fragment() {
         }
 
         if (savedInstanceState == null) {
-            viewModel.calendarEndTime.resetMeetingTime()
-            viewModel.calendarStartTime.resetMeetingTime()
+            viewModel.meetingStartTime.isInitialized = false
+            viewModel.meetingEndTime.isInitialized = false
         }
     }
 
@@ -64,8 +61,8 @@ class ScheduleMeetingFragment : Fragment() {
         updateDateView()
     }
 
-    private fun onTimeUpdated(time: MeetingTime) {
-        viewModel.setMeetingTime(time)
+    private fun onTimeUpdated(meetingTime: MeetingTime) {
+        viewModel.setMeetingTime(meetingTime)
         updateTimeView()
     }
 
@@ -81,13 +78,13 @@ class ScheduleMeetingFragment : Fragment() {
         updateTimeView()
         back.setOnClickListener { requireActivity().onBackPressed() }
         datePickerView.setOnClickListener {
-            dateTimePickerManager.showDatePicker(viewModel.calendar)
+            dateTimePickerManager.showDatePicker(viewModel.meetingStartTime.calendar)
         }
         startTimePickerView.setOnClickListener {
-            dateTimePickerManager.showTimePicker(StartTime(0, 0))
+            dateTimePickerManager.showTimePicker(viewModel.meetingStartTime)
         }
         endTimePickerView.setOnClickListener {
-            dateTimePickerManager.showTimePicker(EndTime(0, 0))
+            dateTimePickerManager.showTimePicker(viewModel.meetingEndTime)
         }
         descriptionText.doOnTextChanged { _, _, _, _ ->
             enableScheduleMeetingButton()
@@ -99,17 +96,17 @@ class ScheduleMeetingFragment : Fragment() {
     }
 
     private fun updateDateView() {
-        datePickerView.text = viewModel.calendar.getDateInDateFormat()
+        datePickerView.text = viewModel.meetingStartTime.calendar.getDateInDateFormat()
         enableScheduleMeetingButton()
     }
 
     private fun updateTimeView() {
-        if (viewModel.calendarStartTime.isInitialized()) {
-            startTimePickerView.text = viewModel.calendarStartTime.formatTime()
+        if (viewModel.meetingStartTime.isInitialized) {
+            startTimePickerView.text = viewModel.meetingStartTime.calendar.getTimeInTimeFormat()
         }
 
-        if (viewModel.calendarEndTime.isInitialized()) {
-            endTimePickerView.text = viewModel.calendarEndTime.formatTime()
+        if (viewModel.meetingEndTime.isInitialized) {
+            endTimePickerView.text = viewModel.meetingEndTime.calendar.getTimeInTimeFormat()
         }
         enableScheduleMeetingButton()
     }
@@ -119,9 +116,9 @@ class ScheduleMeetingFragment : Fragment() {
      *  and description text is not empty
      */
     private fun enableScheduleMeetingButton() {
-        if (viewModel.calendarEndTime.isGreaterThan(viewModel.calendarStartTime)
+        if (viewModel.meetingEndTime.calendar.time > viewModel.meetingStartTime.calendar.time
             && descriptionText.text.toString().isNotEmpty()
-            && !viewModel.calendar.hasDateAlreadyPassed()
+            && !viewModel.meetingStartTime.calendar.hasDateAlreadyPassed()
         ) {
             scheduleMeetingButton.apply {
                 alpha = 1.0f

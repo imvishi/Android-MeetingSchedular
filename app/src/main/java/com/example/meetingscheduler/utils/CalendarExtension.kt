@@ -1,11 +1,11 @@
 package com.example.meetingscheduler.utils
 
 import android.text.format.DateUtils
-import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
 
 private const val DATE_FORMAT = "dd-MM-YYYY"
+private const val TIME_FORMAT = "HH:mm"
 
 /**
  * Extension function to check if the given calendar date has already passed
@@ -26,6 +26,9 @@ fun Calendar.getDateInDateFormat(): String {
 }
 
 /**
- * Entension function to convert time in millies to total number of Days
+ * Extension function to get the calendar time in [TIME_FORMAT]
  */
-fun Calendar.getTotalNumberOfDays() = (this.timeInMillis/(60*60*24*1000)).toInt()
+fun Calendar.getTimeInTimeFormat(): String {
+    val timeFormat = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
+    return timeFormat.format(this.time)
+}

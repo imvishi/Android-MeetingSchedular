@@ -39,9 +39,9 @@ class DateTimePickerManager(val context: Context) {
      */
     fun showTimePicker(meetingTime: MeetingTime) {
         val listener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-            meetingTime.apply {
-                hours = hourOfDay
-                minutes = minute
+            meetingTime.calendar.apply {
+                set(Calendar.HOUR_OF_DAY, hourOfDay)
+                set(Calendar.MINUTE, minute)
             }
             timeUpdatedLiveData.value = meetingTime
         }

@@ -69,14 +69,14 @@ class MeetingListFragment : Fragment() {
     }
 
     private fun updateView() {
-        dateText.text = viewModel.calendar.getDateInDateFormat()
+        dateText.text = viewModel.meetingStartTime.calendar.getDateInDateFormat()
         loadingProgressBar.visibility = View.VISIBLE
         meetingList.visibility = View.GONE
         enableScheduleButton()
     }
 
     private fun enableScheduleButton() {
-        if (viewModel.calendar.hasDateAlreadyPassed()) {
+        if (viewModel.meetingStartTime.calendar.hasDateAlreadyPassed()) {
             scheduleButton.apply {
                 alpha = 0.2f
                 isEnabled = false

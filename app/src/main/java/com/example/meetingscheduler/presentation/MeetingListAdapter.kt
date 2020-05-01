@@ -9,6 +9,7 @@ import com.example.meetingscheduler.data.MeetingDataModel
 import com.example.meetingscheduler.R
 import com.example.meetingscheduler.utils.ConfigurationUtils
 import com.example.meetingscheduler.presentation.MeetingListAdapter.MeetingListViewHolder
+import com.example.meetingscheduler.utils.getTimeInTimeFormat
 import kotlinx.android.synthetic.main.meeting_item.view.*
 
 /**
@@ -47,12 +48,12 @@ class MeetingListAdapter(val context: Context) : RecyclerView.Adapter<MeetingLis
 
         fun bind(dataModel: MeetingDataModel) {
             if (ConfigurationUtils.isLandScape(context)) {
-                startTimeText.text = dataModel.startTime.formatTime()
-                endTimeText.text = dataModel.endTime.formatTime()
+                startTimeText.text = dataModel.startTime.getTimeInTimeFormat()
+                endTimeText.text = dataModel.endTime.getTimeInTimeFormat()
                 participants.text = ""
             } else {
                 val time =
-                    """${dataModel.startTime.formatTime()}-${dataModel.endTime.formatTime()}"""
+                    """${dataModel.startTime.getTimeInTimeFormat()}-${dataModel.endTime.getTimeInTimeFormat()}"""
                 timeText.text = time
             }
             description.text = dataModel.description

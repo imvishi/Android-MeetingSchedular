@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "meeting_schedule_table")
 data class MeetingScheduleEntity(
     @PrimaryKey(autoGenerate = true) var meetingId: Int = 0,
-    @ColumnInfo(name = "meetingDate") var meetingDate: Int,
-    @ColumnInfo(name = "startTime") var startTimeInMinutes: Int,
-    @ColumnInfo(name = "endTime") var endTimeInMinutes: Int,
+    @ColumnInfo(name = "meetingDate") var meetingDate: String,
+    @ColumnInfo(name = "startTime") var startTimeInMillis: Long,
+    @ColumnInfo(name = "endTime") var endTimeInMillis: Long,
     @ColumnInfo(name = "description") var description: String
 )

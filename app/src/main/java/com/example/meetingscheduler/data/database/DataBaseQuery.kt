@@ -1,10 +1,8 @@
 package com.example.meetingscheduler.data.database
 
 import android.content.Context
-import com.example.meetingscheduler.data.EndTime
 import com.example.meetingscheduler.data.MeetingDataModel
-import com.example.meetingscheduler.data.StartTime
-import com.example.meetingscheduler.utils.getTotalNumberOfDays
+import com.example.meetingscheduler.utils.getDateInDateFormat
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -32,9 +30,9 @@ class DataBaseQuery(context: Context, val listener: Callback) {
                 .meetingScheduleDao()
                 .insertMeetingSchedule(
                     MeetingScheduleEntity(
-                        meetingDate = meetingSchedule.meetingDate.getTotalNumberOfDays(),
-                        startTimeInMinutes = meetingSchedule.startTime.getTimeInMinutes(),
-                        endTimeInMinutes = meetingSchedule.endTime.getTimeInMinutes(),
+                        meetingDate = meetingSchedule.startTime.getDateInDateFormat(),
+                        startTimeInMillis = meetingSchedule.startTime.timeInMillis,
+                        endTimeInMillis = meetingSchedule.endTime.timeInMillis,
                         description = meetingSchedule.description
                     )
                 )
@@ -46,14 +44,13 @@ class DataBaseQuery(context: Context, val listener: Callback) {
     fun selectAllMeetingScheduleAtDate(meetingDate: Calendar) {
         coroutineScope.launch {
             val meetingSchedule = async {
-                dataBase.meetingScheduleDao().getMeetingSchedule(meetingDate.getTotalNumberOfDays())
+                dataBase.meetingScheduleDao().getMeetingSchedule(meetingDate.getDateInDateFormat())
             }.await()
             withContext(Dispatchers.Main) {
                 val meetings = meetingSchedule.map {
                     MeetingDataModel(
-                        Calendar.getInstance().apply { it.meetingDate*60*60*24*1000 },
-                        StartTime(it.startTimeInMinutes / 60, it.startTimeInMinutes % 60),
-                        EndTime(it.endTimeInMinutes / 60, it.endTimeInMinutes % 60),
+                        Calendar.getInstance().apply {timeInMillis = it.startTimeInMillis },
+                        Calendar.getInstance().apply {timeInMillis = it.endTimeInMillis },
                         it.description
                     )
                 }
