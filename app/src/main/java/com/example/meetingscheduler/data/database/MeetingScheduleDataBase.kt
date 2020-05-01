@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 private const val DATABASE_NAME = "meeting_database.db"
 
 @Database(entities = [MeetingScheduleEntity::class], version = 1)
+@TypeConverters(DateConvertor::class)
 abstract class MeetingScheduleDataBase : RoomDatabase() {
     abstract fun meetingScheduleDao(): MeetingScheduleDao
 

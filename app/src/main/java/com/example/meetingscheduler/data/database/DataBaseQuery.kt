@@ -2,7 +2,8 @@ package com.example.meetingscheduler.data.database
 
 import android.content.Context
 import com.example.meetingscheduler.data.MeetingDataModel
-import com.example.meetingscheduler.utils.getDateInDateFormat
+import com.example.meetingscheduler.utils.CalendarUtils
+import com.example.meetingscheduler.utils.CalendarUtils.getCalendarWithoutTime
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -30,7 +31,7 @@ class DataBaseQuery(context: Context, val listener: Callback) {
                 .meetingScheduleDao()
                 .insertMeetingSchedule(
                     MeetingScheduleEntity(
-                        meetingDate = meetingSchedule.startTime.getDateInDateFormat(),
+                        meetingDate = getCalendarWithoutTime(meetingSchedule.startTime).time,
                         startTimeInMillis = meetingSchedule.startTime.timeInMillis,
                         endTimeInMillis = meetingSchedule.endTime.timeInMillis,
                         description = meetingSchedule.description
@@ -44,7 +45,9 @@ class DataBaseQuery(context: Context, val listener: Callback) {
     fun selectAllMeetingScheduleAtDate(meetingDate: Calendar) {
         coroutineScope.launch {
             val meetingSchedule = async {
-                dataBase.meetingScheduleDao().getMeetingSchedule(meetingDate.getDateInDateFormat())
+                dataBase
+                    .meetingScheduleDao()
+                    .getMeetingSchedule(getCalendarWithoutTime(meetingDate).time)
             }.await()
             withContext(Dispatchers.Main) {
                 val meetings = meetingSchedule.map {

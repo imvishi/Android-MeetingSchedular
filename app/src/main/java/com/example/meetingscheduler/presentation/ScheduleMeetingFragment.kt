@@ -59,6 +59,7 @@ class ScheduleMeetingFragment : Fragment() {
     private fun onDateUpdated(calendar: Calendar) {
         viewModel.setMeetingScheduleDate(calendar)
         updateDateView()
+        updateTimeView()
     }
 
     private fun onTimeUpdated(meetingTime: MeetingTime) {
@@ -103,10 +104,14 @@ class ScheduleMeetingFragment : Fragment() {
     private fun updateTimeView() {
         if (viewModel.meetingStartTime.isInitialized) {
             startTimePickerView.text = viewModel.meetingStartTime.calendar.getTimeInTimeFormat()
+        } else {
+            startTimePickerView.text = resources.getText(R.string.start_time_prompt)
         }
 
         if (viewModel.meetingEndTime.isInitialized) {
             endTimePickerView.text = viewModel.meetingEndTime.calendar.getTimeInTimeFormat()
+        } else {
+            endTimePickerView.text = resources.getText(R.string.end_time_prompt)
         }
         enableScheduleMeetingButton()
     }
