@@ -18,7 +18,8 @@ class DateTimePickerManager(val context: Context) {
     /**
      * Method shows the DatePickerView to select the date
      */
-    fun showDatePicker(calendar: Calendar) {
+    fun showDatePicker() {
+        val calendar = Calendar.getInstance()
         val listener = DatePickerDialog.OnDateSetListener { v, year, month, dayOfMonth ->
             calendar.apply {
                 set(Calendar.YEAR, year)
@@ -39,10 +40,12 @@ class DateTimePickerManager(val context: Context) {
      */
     fun showTimePicker(meetingTime: MeetingTime) {
         val listener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-            meetingTime.calendar.apply {
+            val calendar = Calendar.getInstance().apply {
+                timeInMillis = meetingTime.timeInMillis
                 set(Calendar.HOUR_OF_DAY, hourOfDay)
                 set(Calendar.MINUTE, minute)
             }
+            meetingTime.timeInMillis = calendar.timeInMillis
             timeUpdatedLiveData.value = meetingTime
         }
         TimePickerDialog(context, listener, 0, 0, true).show()

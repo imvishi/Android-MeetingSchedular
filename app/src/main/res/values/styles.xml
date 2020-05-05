@@ -14,7 +14,7 @@
     </style>
 
     <style name="SchedularButton">
-        <item name="android:background">@drawable/schedular_button</item>
+        <item name="android:gravity">center</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorSchedularButtonText</item>
     </style>

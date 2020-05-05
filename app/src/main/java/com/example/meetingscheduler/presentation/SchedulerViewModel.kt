@@ -3,61 +3,51 @@ package com.example.meetingscheduler.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.example.meetingscheduler.data.*
 import com.example.meetingscheduler.data.MeetingTime.MEETING_END_TIME
 import com.example.meetingscheduler.data.MeetingTime.MEETING_START_TIME
 import com.example.meetingscheduler.data.database.DataBaseQuery
 import com.example.meetingscheduler.data.database.DataBaseQuery.Callback
-import com.example.meetingscheduler.utils.CalendarUtils
-import com.example.meetingscheduler.utils.observeOnceAndNonNull
+import com.example.meetingscheduler.utils.getDateWithOutTime
 import java.util.*
+
+/**
+ * max description length
+ */
+private const val MAX_DESCRIPTION_LENGTH = 140
 
 class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback {
 
     private val dataBaseQuery = DataBaseQuery(app.applicationContext, this)
-    val meetingScheduleLiveData = MutableLiveData<List<MeetingDataModel>>()
+    private lateinit var meetingSchedule: MeetingScheduleDataModel
+
     val meetingScheduledConfirmation = MutableLiveData<Boolean>()
+    var meetingDateCalendar = Calendar.getInstance()
     var meetingStartTime = MEETING_START_TIME
     var meetingEndTime = MEETING_END_TIME
 
-
-    override fun onMeetingScheduleFetched(meetingDataModel: List<MeetingDataModel>) {
-        meetingScheduleLiveData.value = meetingDataModel
-    }
-
-    /**
-     * method to fetch current day schedule
-     */
-    fun getCurrentDaySchedule() {
-        getDateWithOffset(0)
-        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
-    }
-    /**
-     * method used to fetch next day schedule
-     */
-    fun getNextDaySchedule() {
-        getDateWithOffset(1)
-        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
-    }
-
-    /**
-     * method used to fetch prev day schedule
-     */
-    fun getPrevDaySchedule() {
-        getDateWithOffset(-1)
-        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
+    override fun onMeetingScheduleFetched(meetingSchedules: List<MeetingScheduleDataModel>) {
+        if (isTimeAvailable(meetingSchedules)) {
+            dataBaseQuery.insertMeetingSchedule(meetingSchedule)
+            meetingScheduledConfirmation.value = true
+        } else {
+            meetingScheduledConfirmation.value = false
+        }
     }
 
     /**
      * Method to set the meeting date
      */
     fun setMeetingScheduleDate(calendar: Calendar) {
-        this.meetingStartTime.calendar = CalendarUtils.getCalendarWithoutTime(calendar)
-        this.meetingStartTime.isInitialized = false
-        this.meetingEndTime.calendar = CalendarUtils.getCalendarWithoutTime(calendar)
-        this.meetingEndTime.isInitialized = false
-
+        meetingDateCalendar = calendar.getDateWithOutTime()
+        meetingStartTime.apply {
+            timeInMillis = meetingDateCalendar.timeInMillis
+            isInitialized = false
+        }
+        meetingEndTime.apply {
+            timeInMillis = meetingDateCalendar.timeInMillis
+            isInitialized = false
+        }
     }
 
     /**
@@ -75,40 +65,24 @@ class SchedulerViewModel(val app: Application) : AndroidViewModel(app), Callback
      * Method used to schedule the meeting
      */
     fun updateMeeting(description: String) {
-        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingStartTime.calendar)
-        val observer = Observer<List<MeetingDataModel>> {
-            if (!isTimeAvailable(it)) {
-                meetingScheduledConfirmation.value = false
-            } else {
-                dataBaseQuery.insertMeetingSchedule(
-                    MeetingDataModel(
-                        meetingStartTime.calendar,
-                        meetingEndTime.calendar,
-                        description
-                    )
-                )
-                meetingScheduledConfirmation.value = true
-            }
-        }
-        // Reset the live data value, so that observeOnceAndNonNull observe new non null value.
-        meetingScheduleLiveData.value = null
-        meetingScheduleLiveData.observeOnceAndNonNull(observer)
+        val descriptionLength = minOf(description.length, MAX_DESCRIPTION_LENGTH)
+        meetingSchedule = MeetingScheduleDataModel(
+            meetingDateCalendar.time,
+            meetingStartTime.timeInMillis,
+            meetingEndTime.timeInMillis,
+            description.substring(0, descriptionLength)
+        )
+        dataBaseQuery.selectAllMeetingScheduleAtDate(meetingDateCalendar)
     }
 
 
-    private fun isTimeAvailable(meetingDataModel: List<MeetingDataModel>): Boolean {
-        var isTimeAvailable = true
-        meetingDataModel.forEach {
+    private fun isTimeAvailable(meetingSchedules: List<MeetingScheduleDataModel>): Boolean {
+        meetingSchedules.forEach {
             if (it.isTimeOverlapWith(meetingStartTime) || it.isTimeOverlapWith(meetingEndTime)) {
                 //timeslot overlapped with the requested time
-                isTimeAvailable = false
+                return false
             }
         }
-        return isTimeAvailable
-    }
-
-    private fun getDateWithOffset(day: Int) {
-        meetingStartTime.calendar.add(Calendar.DATE, day)
-        meetingEndTime.calendar.add(Calendar.DATE, day)
+        return true
     }
 }

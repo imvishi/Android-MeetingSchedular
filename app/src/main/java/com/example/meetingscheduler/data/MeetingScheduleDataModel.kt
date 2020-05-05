@@ -5,9 +5,10 @@ import java.util.*
 /**
  * data model for meetings
  */
-data class MeetingDataModel(
-    val startTime: Calendar,
-    val endTime: Calendar,
+data class MeetingScheduleDataModel(
+    val meetingDate: Date,
+    val startTimeInMillis: Long,
+    val endTimeInMillis: Long,
     val description: String
 ) {
 
@@ -15,10 +16,7 @@ data class MeetingDataModel(
      * method to check is meeting time is overlap with [startTime] and [endTime]
      */
     fun isTimeOverlapWith(meetingTime: MeetingTime): Boolean {
-        val meetingTimeInMinutes = meetingTime.calendar.timeInMillis
-        val startTimeInMinutes = startTime.timeInMillis
-        val endTimeInMinutes = endTime.timeInMillis
-        if (meetingTimeInMinutes in startTimeInMinutes..endTimeInMinutes) {
+        if (meetingTime.timeInMillis in startTimeInMillis..endTimeInMillis) {
             // requested time clashed with scheduled meeting time
             return true
         }

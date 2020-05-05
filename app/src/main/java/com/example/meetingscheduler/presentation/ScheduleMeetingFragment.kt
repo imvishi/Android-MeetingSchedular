@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.meetingscheduler.data.MeetingTime
 import com.example.meetingscheduler.R
+import com.example.meetingscheduler.data.MeetingTime.MEETING_END_TIME
+import com.example.meetingscheduler.data.MeetingTime.MEETING_START_TIME
 import com.example.meetingscheduler.utils.*
 import kotlinx.android.synthetic.main.meeting_schedule_fragment.*
 import java.util.*
@@ -21,7 +24,10 @@ import java.util.*
 class ScheduleMeetingFragment : Fragment() {
 
     companion object {
-        fun newInstance() = ScheduleMeetingFragment()
+        const val MEETING_DATE = "meeting_date"
+        fun newInstance(calendar: Calendar) = ScheduleMeetingFragment().apply {
+            this.arguments = bundleOf(Pair(MEETING_DATE, calendar))
+        }
     }
 
     private lateinit var viewModel: SchedulerViewModel
@@ -29,42 +35,45 @@ class ScheduleMeetingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(SchedulerViewModel::class.java).also {
-            it.meetingScheduledConfirmation.observeNonNull(this, Observer {
-                loadingProgressBar.visibility = View.GONE
-                if (it) {
-                    AlertDialog.Builder(requireContext())
-                        .setMessage("Meeting Scheduled successfully.")
-                        .show()
-                } else {
-                    AlertDialog.Builder(requireContext())
-                        .setMessage("Please select another slot.")
-                        .show()
-                }
-                viewModel.meetingScheduledConfirmation.value = null
-            })
-
+        viewModel = ViewModelProvider(this).get(SchedulerViewModel::class.java).also {
+            it.meetingScheduledConfirmation.observeNonNull(this, Observer(::showAlertMessage))
         }
         dateTimePickerManager = DateTimePickerManager(requireContext()).also {
             it.dateUpdatedLiveData.observe(this, Observer(::onDateUpdated))
             it.timeUpdatedLiveData.observe(this, Observer(::onTimeUpdated))
         }
-
         if (savedInstanceState == null) {
-            viewModel.meetingStartTime.isInitialized = false
-            viewModel.meetingEndTime.isInitialized = false
+            val calendar = arguments!!.getSerializable(MEETING_DATE) as Calendar
+            viewModel.setMeetingScheduleDate(calendar)
         }
+    }
+
+    /**
+     * method to show the alert message
+     */
+    private fun showAlertMessage(meetingScheduled: Boolean) {
+        loadingProgressBar.visibility = View.GONE
+        val messageToShow = when (meetingScheduled) {
+            true -> "Meeting Scheduled successfully."
+            false -> "Please select another slot."
+        }
+        AlertDialog.Builder(requireContext()).setMessage(messageToShow).show()
+        viewModel.meetingScheduledConfirmation.value = null
     }
 
     private fun onDateUpdated(calendar: Calendar) {
         viewModel.setMeetingScheduleDate(calendar)
         updateDateView()
-        updateTimeView()
+        updateStartTimeView()
+        updateEndTimeView()
     }
 
     private fun onTimeUpdated(meetingTime: MeetingTime) {
         viewModel.setMeetingTime(meetingTime)
-        updateTimeView()
+        when (meetingTime) {
+            MEETING_START_TIME -> updateStartTimeView()
+            MEETING_END_TIME -> updateEndTimeView()
+        }
     }
 
     override fun onCreateView(
@@ -76,11 +85,10 @@ class ScheduleMeetingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         updateDateView()
-        updateTimeView()
+        updateStartTimeView()
+        updateEndTimeView()
         back.setOnClickListener { requireActivity().onBackPressed() }
-        datePickerView.setOnClickListener {
-            dateTimePickerManager.showDatePicker(viewModel.meetingStartTime.calendar)
-        }
+        datePickerView.setOnClickListener { dateTimePickerManager.showDatePicker() }
         startTimePickerView.setOnClickListener {
             dateTimePickerManager.showTimePicker(viewModel.meetingStartTime)
         }
@@ -97,22 +105,17 @@ class ScheduleMeetingFragment : Fragment() {
     }
 
     private fun updateDateView() {
-        datePickerView.text = viewModel.meetingStartTime.calendar.getDateInDateFormat()
+        datePickerView.text = viewModel.meetingDateCalendar.getDateInDateFormat()
         enableScheduleMeetingButton()
     }
 
-    private fun updateTimeView() {
-        if (viewModel.meetingStartTime.isInitialized) {
-            startTimePickerView.text = viewModel.meetingStartTime.calendar.getTimeInTimeFormat()
-        } else {
-            startTimePickerView.text = resources.getText(R.string.start_time_prompt)
-        }
+    private fun updateStartTimeView() {
+        startTimePickerView.text = viewModel.meetingStartTime.getTimeToShow(requireContext())
+        enableScheduleMeetingButton()
+    }
 
-        if (viewModel.meetingEndTime.isInitialized) {
-            endTimePickerView.text = viewModel.meetingEndTime.calendar.getTimeInTimeFormat()
-        } else {
-            endTimePickerView.text = resources.getText(R.string.end_time_prompt)
-        }
+    private fun updateEndTimeView() {
+        endTimePickerView.text = viewModel.meetingEndTime.getTimeToShow(requireContext())
         enableScheduleMeetingButton()
     }
 
@@ -121,19 +124,10 @@ class ScheduleMeetingFragment : Fragment() {
      *  and description text is not empty
      */
     private fun enableScheduleMeetingButton() {
-        if (viewModel.meetingEndTime.calendar.time > viewModel.meetingStartTime.calendar.time
-            && descriptionText.text.toString().isNotEmpty()
-            && !viewModel.meetingStartTime.calendar.hasDateAlreadyPassed()
-        ) {
-            scheduleMeetingButton.apply {
-                alpha = 1.0f
-                isEnabled = true
-            }
-        } else {
-            scheduleMeetingButton.apply {
-                alpha = 0.2f
-                isEnabled = false
-            }
-        }
+        val enableButton =
+            viewModel.meetingEndTime.timeInMillis > viewModel.meetingStartTime.timeInMillis
+                    && descriptionText.text.toString().isNotBlank()
+                    && !viewModel.meetingDateCalendar.hasDateAlreadyPassed()
+        scheduleMeetingButton.disableButton(!enableButton)
     }
 }

@@ -23,13 +23,12 @@ class MeetingListFragment : Fragment() {
         private const val TAG = "MeetingListFragment"
     }
 
-    private lateinit var viewModel: SchedulerViewModel
+    private lateinit var viewModel: MeetingListViewModel
     private lateinit var meetingListAdapter: MeetingListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(SchedulerViewModel::class.java).also {
-            it.getCurrentDaySchedule()
+        viewModel = ViewModelProvider(this).get(MeetingListViewModel::class.java).also {
             it.meetingScheduleLiveData.observe(this, Observer {
                 loadingProgressBar.visibility = View.GONE
                 meetingList.visibility = View.VISIBLE
@@ -62,30 +61,19 @@ class MeetingListFragment : Fragment() {
         }
         scheduleButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.container, ScheduleMeetingFragment.newInstance())
+                .replace(
+                    R.id.container,
+                    ScheduleMeetingFragment.newInstance(viewModel.meetingDateCalendar)
+                )
                 .addToBackStack(TAG)
                 .commit()
         }
     }
 
     private fun updateView() {
-        dateText.text = viewModel.meetingStartTime.calendar.getDateInDateFormat()
+        dateText.text = viewModel.meetingDateCalendar.getDateInDateFormat()
         loadingProgressBar.visibility = View.VISIBLE
         meetingList.visibility = View.GONE
-        enableScheduleButton()
-    }
-
-    private fun enableScheduleButton() {
-        if (viewModel.meetingStartTime.calendar.hasDateAlreadyPassed()) {
-            scheduleButton.apply {
-                alpha = 0.2f
-                isEnabled = false
-            }
-        } else {
-            scheduleButton.apply {
-                alpha = 1.0f
-                isEnabled = true
-            }
-        }
+        scheduleButton.disableButton(shouldDisable = viewModel.meetingDateCalendar.hasDateAlreadyPassed())
     }
 }

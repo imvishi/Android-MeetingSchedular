@@ -104,7 +104,7 @@
         app:layout_constraintBottom_toTopOf="@id/scheduleMeetingButton"
         app:layout_constraintTop_toBottomOf="@id/startTimePickerView" />
 
-    <Button
+    <com.example.meetingscheduler.views.MeetingButton
         android:id="@+id/scheduleMeetingButton"
         style="@style/SchedularButton"
         android:layout_width="match_parent"

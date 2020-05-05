@@ -101,7 +101,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/descriptionText">
 
-        <Button
+        <com.example.meetingscheduler.views.MeetingButton
             android:id="@+id/scheduleMeetingButton"
             style="@style/SchedularButton"
             android:layout_width="match_parent"

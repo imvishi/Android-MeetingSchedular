@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.meetingscheduler.data.MeetingDataModel
+import com.example.meetingscheduler.data.MeetingScheduleDataModel
 import com.example.meetingscheduler.R
 import com.example.meetingscheduler.utils.ConfigurationUtils
 import com.example.meetingscheduler.presentation.MeetingListAdapter.MeetingListViewHolder
-import com.example.meetingscheduler.utils.getTimeInTimeFormat
+import com.example.meetingscheduler.utils.TimeUtils.getTimeFromTimeInMillis
 import kotlinx.android.synthetic.main.meeting_item.view.*
 
 /**
@@ -17,12 +17,12 @@ import kotlinx.android.synthetic.main.meeting_item.view.*
  */
 class MeetingListAdapter(val context: Context) : RecyclerView.Adapter<MeetingListViewHolder>() {
 
-    private val meetingDataModel = mutableListOf<MeetingDataModel>()
+    private val meetingDataModel = mutableListOf<MeetingScheduleDataModel>()
 
     /**
      * update meeting data model
      */
-    fun setDataModel(dataModel: List<MeetingDataModel>) {
+    fun setDataModel(dataModel: List<MeetingScheduleDataModel>) {
         meetingDataModel.clear()
         meetingDataModel.addAll(dataModel)
         notifyDataSetChanged()
@@ -46,14 +46,14 @@ class MeetingListAdapter(val context: Context) : RecyclerView.Adapter<MeetingLis
         val description = view.descriptionText
         val participants = view.participants
 
-        fun bind(dataModel: MeetingDataModel) {
+        fun bind(dataModel: MeetingScheduleDataModel) {
             if (ConfigurationUtils.isLandScape(context)) {
-                startTimeText.text = dataModel.startTime.getTimeInTimeFormat()
-                endTimeText.text = dataModel.endTime.getTimeInTimeFormat()
+                startTimeText.text = getTimeFromTimeInMillis(dataModel.startTimeInMillis)
+                endTimeText.text = getTimeFromTimeInMillis(dataModel.endTimeInMillis)
                 participants.text = ""
             } else {
                 val time =
-                    """${dataModel.startTime.getTimeInTimeFormat()}-${dataModel.endTime.getTimeInTimeFormat()}"""
+                    """${getTimeFromTimeInMillis(dataModel.startTimeInMillis)}-${getTimeFromTimeInMillis(dataModel.endTimeInMillis)}"""
                 timeText.text = time
             }
             description.text = dataModel.description

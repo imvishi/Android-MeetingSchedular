@@ -1,6 +1,8 @@
 package com.example.meetingscheduler.data
 
-import java.util.*
+import android.content.Context
+import com.example.meetingscheduler.R
+import com.example.meetingscheduler.utils.TimeUtils.getTimeFromTimeInMillis
 
 /**
  * Representation of meeting start and end Time
@@ -8,14 +10,25 @@ import java.util.*
 enum class MeetingTime {
 
     MEETING_START_TIME {
-        override var calendar = Calendar.getInstance()
-        override var isInitialized = false
+        override fun getTimeToShow(context: Context): CharSequence {
+            return if (isInitialized) {
+                getTimeFromTimeInMillis(timeInMillis)
+            } else {
+                context.resources.getText(R.string.start_time_prompt)
+            }
+        }
     },
     MEETING_END_TIME {
-        override var calendar: Calendar = Calendar.getInstance()
-        override var isInitialized = false
+        override fun getTimeToShow(context: Context): CharSequence {
+            return if (isInitialized) {
+                getTimeFromTimeInMillis(timeInMillis)
+            } else {
+                context.resources.getText(R.string.end_time_prompt)
+            }
+        }
     };
 
-    abstract var calendar: Calendar
-    abstract var isInitialized: Boolean
+    var timeInMillis = 0L
+    var isInitialized = false
+    abstract fun getTimeToShow(context: Context): CharSequence
 }

@@ -26,9 +26,11 @@ fun Calendar.getDateInDateFormat(): String {
 }
 
 /**
- * Extension function to get the calendar time in [TIME_FORMAT]
+ * Extension function to get the calendar date without time
  */
-fun Calendar.getTimeInTimeFormat(): String {
-    val timeFormat = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
-    return timeFormat.format(this.time)
+fun Calendar.getDateWithOutTime() = this.apply {
+    set(Calendar.HOUR_OF_DAY, 0)
+    set(Calendar.MINUTE, 0)
+    set(Calendar.SECOND, 0)
+    set(Calendar.MILLISECOND, 0)
 }

@@ -1,9 +1,8 @@
 package com.example.meetingscheduler.data.database
 
 import android.content.Context
-import com.example.meetingscheduler.data.MeetingDataModel
-import com.example.meetingscheduler.utils.CalendarUtils
-import com.example.meetingscheduler.utils.CalendarUtils.getCalendarWithoutTime
+import com.example.meetingscheduler.data.MeetingScheduleDataModel
+import com.example.meetingscheduler.utils.getDateWithOutTime
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -19,21 +18,21 @@ class DataBaseQuery(context: Context, val listener: Callback) {
         /**
          * method will be called on meeting scheduled fetched from server
          */
-        fun onMeetingScheduleFetched(meetingDataModel: List<MeetingDataModel>)
+        fun onMeetingScheduleFetched(meetingSchedules: List<MeetingScheduleDataModel>)
     }
 
     /**
      * method to insert the meeting schedule into the data base
      */
-    fun insertMeetingSchedule(meetingSchedule: MeetingDataModel) {
+    fun insertMeetingSchedule(meetingSchedule: MeetingScheduleDataModel) {
         coroutineScope.launch {
             dataBase
                 .meetingScheduleDao()
                 .insertMeetingSchedule(
                     MeetingScheduleEntity(
-                        meetingDate = getCalendarWithoutTime(meetingSchedule.startTime).time,
-                        startTimeInMillis = meetingSchedule.startTime.timeInMillis,
-                        endTimeInMillis = meetingSchedule.endTime.timeInMillis,
+                        meetingDate = meetingSchedule.meetingDate,
+                        startTimeInMillis = meetingSchedule.startTimeInMillis,
+                        endTimeInMillis = meetingSchedule.endTimeInMillis,
                         description = meetingSchedule.description
                     )
                 )
@@ -47,13 +46,14 @@ class DataBaseQuery(context: Context, val listener: Callback) {
             val meetingSchedule = async {
                 dataBase
                     .meetingScheduleDao()
-                    .getMeetingSchedule(getCalendarWithoutTime(meetingDate).time)
+                    .getMeetingSchedule(meetingDate.getDateWithOutTime().time)
             }.await()
             withContext(Dispatchers.Main) {
                 val meetings = meetingSchedule.map {
-                    MeetingDataModel(
-                        Calendar.getInstance().apply {timeInMillis = it.startTimeInMillis },
-                        Calendar.getInstance().apply {timeInMillis = it.endTimeInMillis },
+                    MeetingScheduleDataModel(
+                        it.meetingDate,
+                        it.startTimeInMillis,
+                        it.endTimeInMillis,
                         it.description
                     )
                 }
