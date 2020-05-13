@@ -41,7 +41,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/setupTitle"
+                android:id="@+id/tv_setup_title"
                 style="@style/SchedularButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <TextView
-        android:id="@+id/datePickerView"
+        android:id="@+id/tv_date_picker"
         style="@style/TextDropDown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,44 +65,44 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <TextView
-        android:id="@+id/startTimePickerView"
+        android:id="@+id/tv_start_time_picker"
         style="@style/TextDropDown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/datePickerView"
+        android:layout_below="@+id/tv_date_picker"
         android:layout_margin="@dimen/schedule_screen_margin"
         android:background="@drawable/spinner_drawable"
         android:text="@string/start_time_prompt"
-        app:layout_constraintTop_toBottomOf="@id/datePickerView" />
+        app:layout_constraintTop_toBottomOf="@id/tv_date_picker" />
 
     <TextView
-        android:id="@+id/endTimePickerView"
+        android:id="@+id/tv_end_time_picker"
         style="@style/TextDropDown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/startTimePickerView"
+        android:layout_below="@+id/tv_start_time_picker"
         android:layout_margin="@dimen/schedule_screen_margin"
         android:background="@drawable/spinner_drawable"
         android:text="@string/end_time_prompt"
-        app:layout_constraintTop_toBottomOf="@id/startTimePickerView" />
+        app:layout_constraintTop_toBottomOf="@id/tv_start_time_picker" />
 
     <EditText
-        android:id="@+id/descriptionText"
+        android:id="@+id/tv_description_text"
         style="@style/Description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/endTimePickerView"
-        app:layout_constraintTop_toBottomOf="@id/endTimePickerView" />
+        android:layout_below="@+id/tv_end_time_picker"
+        app:layout_constraintTop_toBottomOf="@id/tv_end_time_picker" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/descriptionText">
+        app:layout_constraintTop_toBottomOf="@id/tv_description_text">
 
         <com.example.meetingscheduler.views.MeetingButton
-            android:id="@+id/scheduleMeetingButton"
+            android:id="@+id/bt_schedule_meeting"
             style="@style/SchedularButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/loadingProgressBar"
+        android:id="@+id/pb_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

@@ -1,47 +1,54 @@
 package com.example.meetingscheduler.data.database
 
 import android.content.Context
+import android.util.Log
 import com.example.meetingscheduler.data.MeetingScheduleDataModel
 import com.example.meetingscheduler.utils.getDateWithOutTime
 import kotlinx.coroutines.*
 import java.util.*
 
+private const val TAG = "DataBaseQuery"
 /**
  * Abstract layer between database and the code.
  */
-class DataBaseQuery(context: Context, val listener: Callback) {
+class DataBaseQuery(context: Context) {
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     private val dataBase = MeetingScheduleDataBase.getDatabase(context)
-
-
-    interface Callback {
-        /**
-         * method will be called on meeting scheduled fetched from server
-         */
-        fun onMeetingScheduleFetched(meetingSchedules: List<MeetingScheduleDataModel>)
-    }
 
     /**
      * method to insert the meeting schedule into the data base
      */
-    fun insertMeetingSchedule(meetingSchedule: MeetingScheduleDataModel) {
+    fun insertMeetingSchedule(
+        meetingSchedule: MeetingScheduleDataModel,
+        onInserted: () -> Unit
+    ) {
         coroutineScope.launch {
-            dataBase
-                .meetingScheduleDao()
-                .insertMeetingSchedule(
-                    MeetingScheduleEntity(
-                        meetingDate = meetingSchedule.meetingDate,
-                        startTimeInMillis = meetingSchedule.startTimeInMillis,
-                        endTimeInMillis = meetingSchedule.endTimeInMillis,
-                        description = meetingSchedule.description
+            val addedId = async {
+                dataBase
+                    .meetingScheduleDao()
+                    .insertMeetingSchedule(
+                        MeetingScheduleEntity(
+                            meetingDate = meetingSchedule.meetingDate,
+                            startTimeInMinutes = meetingSchedule.startTimeInMinutes,
+                            endTimeInMinutes = meetingSchedule.endTimeInMinutes,
+                            description = meetingSchedule.description
+                        )
                     )
-                )
+            }.await()
+            withContext(Dispatchers.Main) {
+                Log.d(TAG, "Value inserted successfully with id $addedId")
+                onInserted.invoke()
+            }
         }
     }
+
     /**
      * method used to get the list of all meeting schedule at given date
      */
-    fun selectAllMeetingScheduleAtDate(meetingDate: Calendar) {
+    fun selectAllMeetingScheduleAtDate(
+        meetingDate: Calendar,
+        onFetched: (List<MeetingScheduleDataModel>) -> Unit
+    ) {
         coroutineScope.launch {
             val meetingSchedule = async {
                 dataBase
@@ -52,12 +59,35 @@ class DataBaseQuery(context: Context, val listener: Callback) {
                 val meetings = meetingSchedule.map {
                     MeetingScheduleDataModel(
                         it.meetingDate,
-                        it.startTimeInMillis,
-                        it.endTimeInMillis,
+                        it.startTimeInMinutes,
+                        it.endTimeInMinutes,
                         it.description
                     )
                 }
-                listener.onMeetingScheduleFetched(meetings)
+                onFetched.invoke(meetings)
+            }
+        }
+    }
+
+    /**
+     * method used to get the count of meeting schedules that are overlapped with the given time
+     */
+    fun selectCountOfOverlappedMeetingWithGivenTime(
+        meetingDate: Calendar,
+        meetingStartTimeInMinutes: Int,
+        meetingEndTimeInMinutes: Int,
+        onFetched: (Int) -> Unit
+    ) {
+        coroutineScope.launch {
+            val meetingScheduleCount = async {
+                dataBase.meetingScheduleDao().getMeetingsOverlappedWithRequestedTime(
+                    meetingDate.getDateWithOutTime().time,
+                    meetingStartTimeInMinutes,
+                    meetingEndTimeInMinutes
+                )
+            }.await()
+            withContext(Dispatchers.Main) {
+                onFetched.invoke(meetingScheduleCount)
             }
         }
     }

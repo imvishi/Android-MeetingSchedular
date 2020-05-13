@@ -11,8 +11,17 @@ import java.util.*
     fun getMeetingSchedule(date: Date): List<MeetingScheduleEntity>
 
     @Insert
-    fun insertMeetingSchedule(meeting: MeetingScheduleEntity)
+    fun insertMeetingSchedule(meeting: MeetingScheduleEntity): Long
 
-    @Query("SELECT * FROM meeting_schedule_table")
-    fun getAll(): List<MeetingScheduleEntity>
+    @Query(
+        "SELECT Count(*) FROM meeting_schedule_table WHERE " +
+                "meetingDate = :date " +
+                "AND ((:meetingStartTimeInMinutes BETWEEN startTime AND endTime) " +
+                "OR (:meetingEndTimeInMinutes BETWEEN startTime AND endTime))"
+    )
+    fun getMeetingsOverlappedWithRequestedTime(
+        date: Date,
+        meetingStartTimeInMinutes: Int,
+        meetingEndTimeInMinutes: Int
+    ): Int
 }

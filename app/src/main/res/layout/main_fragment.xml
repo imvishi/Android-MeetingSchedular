@@ -18,10 +18,10 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/prevDate"
+                android:id="@+id/ll_prev_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@id/dateText"
+                app:layout_constraintEnd_toStartOf="@id/tv_date_text"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -44,24 +44,24 @@
 
 
             <TextView
-                android:id="@+id/dateText"
+                android:id="@+id/tv_date_text"
                 style="@style/DateNavigate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/nextDate"
+                app:layout_constraintEnd_toStartOf="@id/ll_next_date"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toEndOf="@id/prevDate"
+                app:layout_constraintStart_toEndOf="@id/ll_prev_date"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/nextDate"
+                android:id="@+id/ll_next_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toEndOf="@id/dateText"
+                app:layout_constraintStart_toEndOf="@id/tv_date_text"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -84,7 +84,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <ProgressBar
-        android:id="@+id/loadingProgressBar"
+        android:id="@+id/pb_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,14 +93,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/meetingList"
+        android:id="@+id/rv_meeting_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonId"
+        app:layout_constraintBottom_toTopOf="@id/ll_button_id"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <LinearLayout
-        android:id="@+id/buttonId"
+        android:id="@+id/ll_button_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/meeting_item_margin"
@@ -109,7 +109,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.example.meetingscheduler.views.MeetingButton
-            android:id="@+id/scheduleButton"
+            android:id="@+id/bt_schedule"
             style="@style/SchedularButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

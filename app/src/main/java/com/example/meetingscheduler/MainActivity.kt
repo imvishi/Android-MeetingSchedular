@@ -10,24 +10,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
-            showMeetingListFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, MeetingListFragment.newInstance())
+                .commitNow()
         }
-    }
-    override fun onBackPressed() {
-        val count = supportFragmentManager.backStackEntryCount
-        if (count == 0 ){
-            super.onBackPressed()
-        }
-        supportFragmentManager.popBackStackImmediate()
-        showMeetingListFragment()
-    }
-
-    /**
-     * method to show meeting list fragment
-     */
-    private fun showMeetingListFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, MeetingListFragment.newInstance())
-            .commitNow()
     }
 }

@@ -9,7 +9,7 @@ import java.util.*
 data class MeetingScheduleEntity(
     @PrimaryKey(autoGenerate = true) var meetingId: Int = 0,
     var meetingDate: Date,
-    @ColumnInfo(name = "startTime") var startTimeInMillis: Long,
-    @ColumnInfo(name = "endTime") var endTimeInMillis: Long,
+    @ColumnInfo(name = "startTime") var startTimeInMinutes: Int,
+    @ColumnInfo(name = "endTime") var endTimeInMinutes: Int,
     var description: String
 )

@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/timeText"
+        android:id="@+id/tv_time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/meeting_item_margin"
@@ -22,7 +22,7 @@
         android:background="@color/colorTextDivider" />
 
     <TextView
-        android:id="@+id/descriptionText"
+        android:id="@+id/tv_description_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/meeting_item_margin"

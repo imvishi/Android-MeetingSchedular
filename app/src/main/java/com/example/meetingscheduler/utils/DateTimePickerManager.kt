@@ -3,8 +3,6 @@ package com.example.meetingscheduler.utils
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import androidx.lifecycle.MutableLiveData
-import com.example.meetingscheduler.data.MeetingTime
 import java.util.*
 
 /**
@@ -12,13 +10,10 @@ import java.util.*
  */
 class DateTimePickerManager(val context: Context) {
 
-    val dateUpdatedLiveData = MutableLiveData<Calendar>()
-    val timeUpdatedLiveData = MutableLiveData<MeetingTime>()
-
     /**
      * Method shows the DatePickerView to select the date
      */
-    fun showDatePicker() {
+    fun showDatePicker( onDatePicked: (Calendar) -> Unit) {
         val calendar = Calendar.getInstance()
         val listener = DatePickerDialog.OnDateSetListener { v, year, month, dayOfMonth ->
             calendar.apply {
@@ -26,7 +21,7 @@ class DateTimePickerManager(val context: Context) {
                 set(Calendar.MONTH, month)
                 set(Calendar.DAY_OF_MONTH, dayOfMonth)
             }
-            dateUpdatedLiveData.value = calendar
+            onDatePicked.invoke(calendar)
         }
         DatePickerDialog(
             context, listener,
@@ -38,15 +33,9 @@ class DateTimePickerManager(val context: Context) {
     /**
      * Method shows the TimePickerView to select the time
      */
-    fun showTimePicker(meetingTime: MeetingTime) {
+    fun showTimePicker(onTimePicked: (Int) -> Unit) {
         val listener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-            val calendar = Calendar.getInstance().apply {
-                timeInMillis = meetingTime.timeInMillis
-                set(Calendar.HOUR_OF_DAY, hourOfDay)
-                set(Calendar.MINUTE, minute)
-            }
-            meetingTime.timeInMillis = calendar.timeInMillis
-            timeUpdatedLiveData.value = meetingTime
+            onTimePicked.invoke(hourOfDay * 60 + minute)
         }
         TimePickerDialog(context, listener, 0, 0, true).show()
     }

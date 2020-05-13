@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val DATE_FORMAT = "dd-MM-YYYY"
-private const val TIME_FORMAT = "HH:mm"
 
 /**
  * Extension function to check if the given calendar date has already passed

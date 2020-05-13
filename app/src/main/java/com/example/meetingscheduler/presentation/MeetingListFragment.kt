@@ -23,19 +23,30 @@ class MeetingListFragment : Fragment() {
         private const val TAG = "MeetingListFragment"
     }
 
-    private lateinit var viewModel: MeetingListViewModel
+    private lateinit var viewModel: MeetingViewModel
     private lateinit var meetingListAdapter: MeetingListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MeetingListViewModel::class.java).also {
-            it.meetingScheduleLiveData.observe(this, Observer {
-                loadingProgressBar.visibility = View.GONE
-                meetingList.visibility = View.VISIBLE
-                meetingListAdapter.setDataModel(it)
-            })
+        meetingListAdapter = MeetingListAdapter()
+        viewModel = ViewModelProvider(requireActivity()).get(MeetingViewModel::class.java).also {
+                it.meetingScheduleLiveData.observe(this, Observer {
+                    pb_loading.visibility = View.GONE
+                    rv_meeting_list.visibility = View.VISIBLE
+                    meetingListAdapter.setDataModel(it)
+                })
+            }
+
+        if (savedInstanceState == null) {
+            viewModel.getCurrentDaySchedule()
         }
-        meetingListAdapter = MeetingListAdapter(requireContext())
+
+        parentFragmentManager.addOnBackStackChangedListener {
+            if (parentFragmentManager.backStackEntryCount == 0) {
+                //Refresh the meeting list when meetingListFragment popped from back stack
+                viewModel.getCurrentDaySchedule()
+            }
+        }
     }
 
     override fun onCreateView(
@@ -46,34 +57,31 @@ class MeetingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        meetingList.apply {
+        rv_meeting_list.apply {
             adapter = meetingListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
         updateView()
-        nextDate.setOnClickListener {
+        ll_next_date.setOnClickListener {
             viewModel.getNextDaySchedule()
             updateView()
         }
-        prevDate.setOnClickListener {
+        ll_prev_date.setOnClickListener {
             viewModel.getPrevDaySchedule()
             updateView()
         }
-        scheduleButton.setOnClickListener {
+        bt_schedule.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(
-                    R.id.container,
-                    ScheduleMeetingFragment.newInstance(viewModel.meetingDateCalendar)
-                )
+                .replace(R.id.container, ScheduleMeetingFragment.newInstance(), TAG)
                 .addToBackStack(TAG)
                 .commit()
         }
     }
 
     private fun updateView() {
-        dateText.text = viewModel.meetingDateCalendar.getDateInDateFormat()
-        loadingProgressBar.visibility = View.VISIBLE
-        meetingList.visibility = View.GONE
-        scheduleButton.disableButton(shouldDisable = viewModel.meetingDateCalendar.hasDateAlreadyPassed())
+        tv_date_text.text = viewModel.meetingDateCalendar.getDateInDateFormat()
+        pb_loading.visibility = View.VISIBLE
+        rv_meeting_list.visibility = View.GONE
+        bt_schedule.disableButton(shouldDisable = viewModel.meetingDateCalendar.hasDateAlreadyPassed())
     }
 }
