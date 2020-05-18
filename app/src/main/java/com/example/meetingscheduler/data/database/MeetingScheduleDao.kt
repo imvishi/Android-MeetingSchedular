@@ -7,7 +7,7 @@ import java.util.*
 
 @Dao interface MeetingScheduleDao {
 
-    @Query("SELECT * FROM meeting_schedule_table WHERE meetingDate = :date")
+    @Query("SELECT * FROM meeting_schedule_table WHERE meetingDate = :date ORDER BY startTime")
     fun getMeetingSchedule(date: Date): List<MeetingScheduleEntity>
 
     @Insert
@@ -16,8 +16,10 @@ import java.util.*
     @Query(
         "SELECT Count(*) FROM meeting_schedule_table WHERE " +
                 "meetingDate = :date " +
-                "AND ((:meetingStartTimeInMinutes BETWEEN startTime AND endTime) " +
-                "OR (:meetingEndTimeInMinutes BETWEEN startTime AND endTime))"
+                "AND ((:meetingStartTimeInMinutes >= startTime AND :meetingStartTimeInMinutes < endTime) " +
+                "OR (:meetingEndTimeInMinutes > startTime AND :meetingEndTimeInMinutes <= endTime))" +
+                "OR ((startTime > :meetingStartTimeInMinutes AND startTime < :meetingEndTimeInMinutes) " +
+                "AND (endTime > :meetingStartTimeInMinutes AND endTime < :meetingEndTimeInMinutes))"
     )
     fun getMeetingsOverlappedWithRequestedTime(
         date: Date,
